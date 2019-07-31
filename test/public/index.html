@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <script src="jx.js"></script>
+    </head>
+    <body>
+        <h1>Jx LIB Testing Page</h1>
+        <script type="text/javascript">
+            function logFN(msg){
+                return function() { 
+                    if (arguments[0] && typeof arguments[0] === 'object' 
+                        && arguments[0].message && arguments[0].stack) {
+                        console.error(msg)
+                        console.error(arguments[0].message)
+                        console.error(arguments[0].stack)
+                    } else {
+                        console.log(msg) 
+                    }
+                }
+            }
+        </script>
+        <script src="js/loader-test.js"></script>
+        <script src="js/tag-loader-test.js"></script>
+    </body>
+</html>
