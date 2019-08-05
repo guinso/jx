@@ -1,14 +1,19 @@
 /**
- * 
- * @param {function(Object, function(Object): void, function(Error): void): void} fn function caller
- * @param {Object...} arg arguments pass to function
+ * @module jx
  */
-function makePromise(fn) {
+
+/**
+ * Create promise instance
+ * 
+ * @param {Function(Object, Function(Object):void, Function(Error):void):void} fn function caller
+ * @param {...Object} arg arguments pass to function
+ */
+function makePromise(fn, ...arg) {
     var thisInstance = this
 
     var fnArgs = []
-    for(var i=1; i < arguments.length; i++) {
-        fnArgs.push(arguments[i])
+    for(var i=0; i < arg.length; i++) {
+        fnArgs.push(arg[i])
     }
 
     return new Promise(function(resolve, reject){

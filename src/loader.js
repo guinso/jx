@@ -2,35 +2,55 @@
  * @module jx/loader
  */
 
-/**
- * @typedef {Object} CacheLUT
- * @property {string} fileName  name of the file
- * @property {string} text content of the file
- */
-
 var makePromise = require('./makePromise.js')
 
 /**
- * @constructor file loader utility
+ * HTTP request loader utility
+ * 
+ * @class
+ * @constructor
  */
-function loader() {
+function Loader() {
+    /**
+     * @typedef {Object} CacheLUT
+     * @property {String} fileName file URL name
+     * @property {String} text  file contents
+     */
     /**
      * @private
      * @type {Array<CacheLUT>}
      */
-    this.fileLUT_ = []
+    this._fileLUT = []
 }
 
 /**
- * load file asynchornously from server
- * @param {string} urlFile  URL of the file
- * @param {function(string): void} successFN handle when fetch file success
- * @param {function(Error): void}  failureFN handle when failed to fetch file
+ * Callback to handle load file success event
+ * @callback LoadSuccessCallback
+ * @param {String} text file content
+ * @returns {void}
  */
-loader.prototype.loadFile = function(urlFile, successFN, failureFN) {
+
+/**
+  * Callback to handle error event
+ * @callback FailCallback
+ * @param {Error} err error
+ * @returns {void}
+ */
+
+/**
+ * load file asynchornously from server
+ * 
+ * @param {String} urlFile  URL of the file
+ * @param {LoadSuccessCallback} successFN handle when fetch file success
+ * @param {FailCallback}  failureFN handle when failed to fetch file
+ * 
+ * @see module:jx/loader~LoadSuccessCallback
+ * @see module:jx/loader~FailCallback
+ */
+Loader.prototype.loadFile = function(urlFile, successFN, failureFN) {
     var thisInstance = this
 
-    var cacheFiles = this.fileLUT_.filter(function(x) { return x.fileName == urlFile })
+    var cacheFiles = this._fileLUT.filter(function(x) { return x.fileName == urlFile })
 
     if (cacheFiles.length > 0) {
         //console.log("File " + urlFile + " is cached")
@@ -47,7 +67,7 @@ loader.prototype.loadFile = function(urlFile, successFN, failureFN) {
 
     request.onload = function() {
         if (request.status == 200 || request.status < 300) {
-            thisInstance.fileLUT_.push({ fileName: urlFile, text: request.responseText })
+            thisInstance._fileLUT.push({ fileName: urlFile, text: request.responseText })
 
             successFN(request.responseText)
         } else {
@@ -63,20 +83,22 @@ loader.prototype.loadFile = function(urlFile, successFN, failureFN) {
 
 /**
  * Make loade file promise
- * @param {string} fileURL URL of file
- * @returns {Promise<string>} promise with raw text return
+ * 
+ * @param {String} fileURL URL of file
+ * @returns {Promise<String>} promise with raw text return
  */
-loader.prototype.loadFilePromise = function(fileURL) {
+Loader.prototype.loadFilePromise = function(fileURL) {
     return makePromise.call(this, this.loadFile, fileURL)
 }
 
 /**
  * Load multiple files at once
- * @param {string} urls URL files
- * @param {function(string...): void} successFN handler when all files successfully loaded
- * @param {function(Error): void} failedFN handler when one of the files failed to load
+ * 
+ * @param {String} urls URL files
+ * @param {Function(...String):void} successFN handler when all files successfully loaded
+ * @param {Function(Error):void} failedFN handler when one of the files failed to load
  */
-loader.prototype.loadMultipleFiles = function(urls, successFN, failedFN) {
+Loader.prototype.loadMultipleFiles = function(urls, successFN, failedFN) {
     var thisInstance = this
     var urlCount = urls.length
 
@@ -89,7 +111,7 @@ loader.prototype.loadMultipleFiles = function(urls, successFN, failedFN) {
                 successCount++
                 if (successCount == urlCount) {
                     var responseTexts = urls.map(function(url) {
-                        var cache = thisInstance.fileLUT_.filter(function(x) { return x.fileName == url})
+                        var cache = thisInstance._fileLUT.filter(function(x) { return x.fileName == url})
                         return cache[0].text
                     })
                     successFN.apply(this, responseTexts)
@@ -105,21 +127,23 @@ loader.prototype.loadMultipleFiles = function(urls, successFN, failedFN) {
 }
 
 /**
+ * Load multiple files in once (in promise fahsion)
  * 
- * @param {Array<string>} urls URL files
- * @return {Promise<string...>} promise with array of raw files texts
+ * @param {Array<String>} urls URL files
+ * @return {Promise<...String>} promise with array of raw files texts
  */
-loader.prototype.loadMultipleFilesPromise = function(urls) {
+Loader.prototype.loadMultipleFilesPromise = function(urls) {
     return makePromise.call(this, this.loadMultipleFiles, urls)
 }
 
 /**
  * load HTML partial and wrap into DIV HTMLelement
- * @param {string} url HTML partial file url
- * @param {function(HTMLelement): void} successFN handler when success load HTML partial file
- * @param {function(Error): void} failedFN handler when failed to load HTML partial file
+ * 
+ * @param {String} url HTML partial file url
+ * @param {Function(HTMLelement):void} successFN handler when success load HTML partial file
+ * @param {Function(Error):void} failedFN handler when failed to load HTML partial file
  */
-loader.prototype.loadPartial = function(url, successFN, failedFN) {
+Loader.prototype.loadPartial = function(url, successFN, failedFN) {
     this.loadFile(url,
         function(text) {
             var partial = document.createElement('div')
@@ -131,21 +155,25 @@ loader.prototype.loadPartial = function(url, successFN, failedFN) {
 };
 
 /**
- * load HTML partial and wrap into DIV HTML tag
- * @param {string} url HTML partial file url
+ * load HTML partial and wrap into DIV HTML tag 
+ * 
+ * @param {String} url HTML partial file url
  * @return {Promise<HTMLelement>} HTML element (DIV) with embeded partial content
  */
-loader.prototype.loadPartialPromise = function(url) {
+Loader.prototype.loadPartialPromise = function(url) {
     return makePromise.call(this, this.loadPartial, url)
 };
 
 /**
- * load multiple HTML partials into DIV HTML tag
- * @param {Array<string>} urlFiles list of HTML url paths
- * @param {function(HTMLelement...): void} successFN handler when success load HTML partial files
- * @param {function(Error): void} failedFN handler when failed to load HTML partial file
+ * load multiple HTML partials into DIV HTML tag (in promise fahsion)
+ * 
+ * @param {Array<String>} urlFiles list of HTML url paths
+ * @param {Function(...HTMLelement):void} successFN handler when success load HTML partial files
+ * @param {FailCallback} failedFN handler when failed to load HTML partial file
+ * 
+ * @see module:jx/loader~FailCallback
  */
-loader.prototype.loadMultiplePartials = function(urlFiles, successFN, failureFN) {
+Loader.prototype.loadMultiplePartials = function(urlFiles, successFN, failureFN) {
     this.loadMultipleFiles(urlFiles,
         function() {
             try {
@@ -167,12 +195,13 @@ loader.prototype.loadMultiplePartials = function(urlFiles, successFN, failureFN)
 };
 
 /**
- * load HTML partial and wrap into DIV HTML tag
- * @param {string} url HTML partial file url
- * @return {Promise<HTMLelement...>} HTML element (DIV) with embeded partial content
+ * load multiple HTML partials and wrap into DIV HTML tag (in Promise fahsion)
+ *
+ * @param {String} url HTML partial file url
+ * @return {Promise<...HTMLelement>} HTML element (DIV) with embeded partial content
  */
-loader.prototype.loadMultiplePartialsPromise = function(urls) {
+Loader.prototype.loadMultiplePartialsPromise = function(urls) {
     return makePromise.call(this, this.loadMultiplePartials, urls)
 };
 
-module.exports = loader
+module.exports = Loader

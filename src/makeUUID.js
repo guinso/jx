@@ -1,6 +1,13 @@
 /**
- * Source: stackoverflow
+ * @module jx
+ */
+
+/**
+ * Create UUID <br/>
+ * Source: stackoverflow<br/>
  * URL: https://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
+ * 
+ * @public
  */
 function makeUUID() {
     var d = Date.now();

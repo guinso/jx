@@ -5,9 +5,12 @@
 var makePromise = require('./makePromise.js')
 
 /**
- * @constructor Network request utility
+ * Network request utility
+ * 
+ * @class
+ * @constructor 
  */
-function request() {
+function Request() {
 
 }
 
@@ -17,7 +20,7 @@ function request() {
  * @param {function(object): void} successFN handler when successfully get data from URL path
  * @param {function(Error): void} failedFN handler when failed to get data from URL path
  */
-request.prototype.getJSON = function(url, successFN, failedFN) {
+Request.prototype.getJSON = function(url, successFN, failedFN) {
     var req = new XMLHttpRequest()
     req.onerror = function() {
         failedFN(new Error(
@@ -46,7 +49,7 @@ request.prototype.getJSON = function(url, successFN, failedFN) {
  * @param {string} url URL path to get data
  * @returns {Promise<object>} promise instance with parameter JSON type
  */
-request.prototype.getJSONPromise = function(url) {
+Request.prototype.getJSONPromise = function(url) {
     return makePromise(this.getJSON, url)
 };
 
@@ -57,7 +60,7 @@ request.prototype.getJSONPromise = function(url) {
  * @param {function(JSON): void} successFN handler when success post data to URL
  * @param {function(Error): void} failedFN handler when failed to post data to URL
  */
-request.prototype.postJSON = function(url, input, successFN, failedFN) {
+Request.prototype.postJSON = function(url, input, successFN, failedFN) {
     var request = new XMLHttpRequest()
     request.onerror = function() {
         failedFN(new Error(
@@ -91,7 +94,7 @@ request.prototype.postJSON = function(url, input, successFN, failedFN) {
  * @param {object} input input data
  * @returns {Promise<object>} return Promise instance
  */
-request.prototype.postJSONPromise = function(url, input) {
+Request.prototype.postJSONPromise = function(url, input) {
     return makePromise.call(this, this.postJSON, url, input)
 };
 
@@ -102,7 +105,7 @@ request.prototype.postJSONPromise = function(url, input) {
  * @param {function(): void} successFN function delegate on success event
  * @param {function(Error): void} failedFN function delegate on failed event
  */
-request.prototype.postForm = function(url, formData, successFN, failedFN) {
+Request.prototype.postForm = function(url, formData, successFN, failedFN) {
     var request = new XMLHttpRequest()
 
     request.onerror = function() {
@@ -129,6 +132,8 @@ request.prototype.postForm = function(url, formData, successFN, failedFN) {
  * @param {string} url form post URL
  * @param {FormData} formData request input data (support multipart)
  */
-request.prototype.postFormPromise = function(url, formData) {
+Request.prototype.postFormPromise = function(url, formData) {
     return makePromise.call(this, this.postForm, url, formData)
 };
+
+module.exports = Request

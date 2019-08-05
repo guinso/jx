@@ -1,0 +1,26 @@
+{
+    "compilerOptions": {
+        "target": "es2015",
+        "module": "commonjs",
+
+        //https://blog.andrewray.me/autocomplete-es-modules-webpack-vscode/
+        "baseUrl": ".",
+        "paths": {
+            "*": [
+                "*.js",
+                "src/*.js"
+            ]
+        }
+    },
+    "include": [
+        "src/*.js"
+    ],
+    "exclude": [
+        "node_modules"
+    ]
+}
+
+//URL: https://code.visualstudio.com/docs/languages/javascript
+//URL: http://json.schemastore.org/tsconfig
+//URL: https://github.com/Microsoft/vscode/issues/37056
+//URL: https://code.visualstudio.com/docs/languages/jsconfig

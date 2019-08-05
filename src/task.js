@@ -1,15 +1,22 @@
+/**
+ * @module jx/task
+ */
+
 var PromiseTask = require('./PromiseTask.js')
 
 /**
- * @constructor task runner
+ * Promise Task Runner
+ * 
+ * @class
+ * @constructor
  */
-function task(){}
+function Task(){}
 
 /**
  * Run promise tasks
  * @param {PromiseTask} promiseTask tasks
  */
-task.prototype.run = function(promiseTask) {
+Task.prototype.run = function(promiseTask) {
     if (promiseTask.isSerial === true) { //run in serial
         return promiseTask.tasks.reduce(this._serialTaskReducer, Promise.resolve([]))
     } else if (promiseTask.isSerial === false) { //run in parallel
@@ -21,9 +28,9 @@ task.prototype.run = function(promiseTask) {
 };
 
 /**
- * @param {Array<function(): Promise<object>} tasks list of promises task function
+ * @param {Array<function(): Promise<object>>} tasks list of promises task function
  */
-task.prototype._parallelTaskReducer = function(tasks) {
+Task.prototype._parallelTaskReducer = function(tasks) {
     var promises = []
 
     for (var i = 0; i < tasks.length; i++) {
@@ -46,7 +53,7 @@ task.prototype._parallelTaskReducer = function(tasks) {
  * @param {Promise<object>} promiseChain latest promise ran
  * @param {function(): Promise<object>} fn function promise
  */
-task.prototype._serialTaskReducer = function(promiseChain, fn) {
+Task.prototype._serialTaskReducer = function(promiseChain, fn) {
     if (typeof fn === 'function') {
         return promiseChain.then(function(chainResult) {
             return fn().then(function(fnResult) {
@@ -62,4 +69,4 @@ task.prototype._serialTaskReducer = function(promiseChain, fn) {
     }
 };
 
-module.exports = task
+module.exports = Task

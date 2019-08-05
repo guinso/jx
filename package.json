@@ -1,14 +1,17 @@
 {
-  "name": "jx",
-  "version": "0.1.0",
+  "name": "@guinso/jx",
+  "version": "1.0.3",
   "description": "javascript experimental utulity library",
-  "main": "src/js/index.js",
+  "repository": "https://github.com/guinso/jx",
+  "main": "src/index.js",
   "scripts": {
     "deploy": "npm run build && npm run compact",
-    "build": "browserify src/index.js > dist/jx.js",
+    "build": "browserify src/index-standalone.js > dist/jx.js",
     "compact": "uglifyjs dist/jx.js -c -m -o dist/jx.min.js --source-map --output dist/jx.min.js",
-    "server": "node test/server.js",
-    "copy": "cpx dist/*.js test/public/js && cpx dist/*.map test/public/js"
+    "start": "node test/server.js",
+    "copy": "cpx dist/*.js test/public/js && cpx dist/*.map test/public/js",
+    "publish": "npm publish --access public",
+    "doc": "jsdoc src/"
   },
   "keywords": [
     "jx"
@@ -19,10 +22,11 @@
     "browserify": "^16.3.0",
     "cpx": "^1.5.0",
     "express": "^4.17.1",
+    "jsdoc": "^3.6.3",
+    "typescript": "^3.5.3",
     "uglify-js": "^3.6.0"
   },
   "dependencies": {
-    "braces": "^3.0.2",
     "promise-polyfill": "^8.1.3"
   }
 }

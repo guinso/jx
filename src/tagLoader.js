@@ -2,23 +2,25 @@
  * @module jx/tagLoader
  */
 
-var loader = require('./loader.js')
+var loader = require('./Loader.js')
 var makePromise = require('./makePromise.js')
 
 /**
- * @constructor load tag file loader
- * @param {jx/loader} loader jx file loader
+ * @class
+ * @constructor
+ * @param {Loader} loader jx file loader
  */
-function tagLoader() {
+function TagLoader() {
     this.loader_ = new loader()
 }
 
 /**
  * add javascript into script tag
+ * 
  * @param {string} rawText javascript tag
  * @param {string} fileURL JS file URL reference
  */
-tagLoader.prototype.addJSTag = function(rawText, fileURL) {
+TagLoader.prototype.addJSTag = function(rawText, fileURL) {
     var header = document.head // document.getElementsByTagName('head')[0]
 
     var found = false
@@ -58,7 +60,7 @@ tagLoader.prototype.addJSTag = function(rawText, fileURL) {
  * @param {string} rawText CSS content text
  * @param {string} fileURL CSS file URL reference
  */
-tagLoader.prototype.addCSSTag = function(rawText, fileURL) {
+TagLoader.prototype.addCSSTag = function(rawText, fileURL) {
     //add into header
     var header = document.head // document.getElementsByTagName('head')[0]
 
@@ -94,7 +96,7 @@ tagLoader.prototype.addCSSTag = function(rawText, fileURL) {
  * @param {string} urlFile URL file path
  * @param {string} rawText file content
  */
-tagLoader.prototype.addTag_ = function(urlFile, rawText) {
+TagLoader.prototype.addTag_ = function(urlFile, rawText) {
     if (urlFile.endsWith('.js')) {
         this.addJSTag(rawText, urlFile)
     } else if (urlFile.endsWith('.css')) {
@@ -110,7 +112,7 @@ tagLoader.prototype.addTag_ = function(urlFile, rawText) {
  * @param {function(): void} successFN handler when load and tag file success
  * @param {function(Error): void} failureFN handler when failed to load and tag file
  */
-tagLoader.prototype.addFile = function(urlFile, successFN, failureFN) {
+TagLoader.prototype.addFile = function(urlFile, successFN, failureFN) {
     var thisInstance = this
 
     this.loader_.loadFile(urlFile,
@@ -130,7 +132,7 @@ tagLoader.prototype.addFile = function(urlFile, successFN, failureFN) {
  * @param {string} urlFile URL file
  * @returns {Promise<void>} promise of load and tag file
  */
-tagLoader.prototype.addFilePromise = function(urlFile) {
+TagLoader.prototype.addFilePromise = function(urlFile) {
     return makePromise.call(this, this.addFile, urlFile)
 };
 
@@ -140,7 +142,7 @@ tagLoader.prototype.addFilePromise = function(urlFile) {
  * @param {function(): void} successFN handler when successfully load and add HTML tag
  * @param {function(Error): void} failureFN handler when failed to load and add HTML tag 
  */
-tagLoader.prototype.addMultipleFiles = function(urlFiles, successFN, failureFN) {
+TagLoader.prototype.addMultipleFiles = function(urlFiles, successFN, failureFN) {
     var thisInstance = this
     this.loader_.loadMultipleFiles(urlFiles,
         function() {
@@ -162,8 +164,8 @@ tagLoader.prototype.addMultipleFiles = function(urlFiles, successFN, failureFN) 
  * @param {Array<string>} urlFiles list of URL files to load into HTML tag
  * @returns {Promise<void>} promise of load and tag files
  */
-tagLoader.prototype.addMultipleFilesPromise = function(urlFiles) {
+TagLoader.prototype.addMultipleFilesPromise = function(urlFiles) {
     return makePromise.call(this, this.addMultipleFiles, urlFiles)
 };
 
-module.exports = tagLoader
+module.exports = TagLoader
