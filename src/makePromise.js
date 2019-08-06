@@ -8,12 +8,12 @@
  * @param {Function(Object, Function(Object):void, Function(Error):void):void} fn function caller
  * @param {...Object} arg arguments pass to function
  */
-function makePromise(fn, ...arg) {
+function makePromise(fn) {
     var thisInstance = this
 
     var fnArgs = []
-    for(var i=0; i < arg.length; i++) {
-        fnArgs.push(arg[i])
+    for(var i=1; i < arguments.length; i++) {
+        fnArgs.push(arguments[i])
     }
 
     return new Promise(function(resolve, reject){
