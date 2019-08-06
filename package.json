@@ -10,7 +10,7 @@
     "compact": "uglifyjs dist/jx.js -c -m -o dist/jx.min.js --source-map --output dist/jx.min.js",
     "start": "node test/server.js",
     "copy": "cpx dist/*.js test/public/js && cpx dist/*.map test/public/js",
-    "publish": "npm publish --access public",
+    "commit": "npm publish --access public",
     "doc": "jsdoc src/"
   },
   "keywords": [
