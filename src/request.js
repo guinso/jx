@@ -34,7 +34,7 @@ Request.prototype.getJSON = function(url, successFN, failedFN) {
             var jsonObj = JSON.parse(req.responseText)
             successFN(jsonObj)
         } else {
-            failureFN(new Error(
+            failedFN(new Error(
                 "Failed to get " + url +
                 ", HTTP status: " + req.status + " - " + req.statusText))
         }
