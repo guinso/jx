@@ -1,6 +1,6 @@
 {
   "name": "@guinso/jx",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "javascript experimental utulity library",
   "repository": "https://github.com/guinso/jx",
   "main": "src/index.js",
